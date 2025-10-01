@@ -1,0 +1,36 @@
+# OS
+Thumbs.db
+*.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Env/Secrets
+.env
+.env.*
+ENVIRONMENT
+ENVIRONMENT.*
+*.pem
+*.key
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+
+# Logs
+*.log
+*.out
+*.err
+
+# Editor
+.idea/
+.vscode/
+
+
