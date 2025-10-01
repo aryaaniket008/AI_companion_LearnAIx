@@ -24,6 +24,9 @@ ENVIRONMENT.*
 *.tar
 *.tar.gz
 
+# Ignore nested extracted repo folder
+learnaix-h-2025-tech-titans-main/
+
 # Logs
 *.log
 *.out
