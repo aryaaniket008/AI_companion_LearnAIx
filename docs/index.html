@@ -28,10 +28,56 @@
         <p>If you expected an app backend, that runs separately (e.g., Flask). GitHub Pages hosts only static files (HTML/CSS/JS).</p>
         <a class="btn" href="https://github.com/aryaaniket008/AI_companion_LearnAIx">View Repository</a>
       </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Try the Assistant</h2>
+        <div id="chat" style="height:260px; overflow:auto; border:1px solid #e2e8f0; border-radius:8px; padding:12px; background:#f1f5f9"></div>
+        <div style="display:flex; gap:8px; margin-top:8px">
+          <input id="userid" type="number" value="1" min="1" style="max-width:120px"/>
+          <input id="message" placeholder="Ask anything..." style="flex:1" />
+          <button id="send" class="btn">Send</button>
+        </div>
+        <div style="margin-top:8px; font-size:12px; color:#475569">Backend URL: <code id="apiurl"></code></div>
+      </div>
     </main>
     <footer>
       <small>© 2025 AI Companion LearnAIx</small>
     </footer>
+    <script src="./config.js"></script>
+    <script>
+      const API = (window.API_BASE_URL||'').replace(/\/$/,'');
+      document.getElementById('apiurl').textContent = API || '(not set)';
+      const chatEl = document.getElementById('chat');
+      const msgEl = document.getElementById('message');
+      const userEl = document.getElementById('userid');
+      const sendBtn = document.getElementById('send');
+      let history = [];
+      function add(role, text){
+        const div = document.createElement('div');
+        div.innerHTML = `<strong>${role}:</strong> ${String(text||'').replace(/</g,'&lt;')}`;
+        div.style.margin = '6px 0';
+        chatEl.appendChild(div);
+        chatEl.scrollTop = chatEl.scrollHeight;
+      }
+      async function send(){
+        const text = (msgEl.value||'').trim();
+        if(!text) return;
+        add('You', text); msgEl.value='';
+        if(!API){ add('System', 'Backend not configured. Edit docs/config.js to set API URL.'); return; }
+        try{
+          const res = await fetch(`${API}/chat`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ message: text, user_id: Number(userEl.value)||1, chat_history: history })
+          });
+          const data = await res.json();
+          const reply = data.response || data.error || 'No response';
+          add('Assistant', reply);
+          history.push({ sender:'user', message:text }, { sender:'assistant', message:reply });
+        }catch(e){ add('System', 'Failed to reach backend'); }
+      }
+      sendBtn.addEventListener('click', send);
+      msgEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') send(); });
+    </script>
   </body>
   </html>
 
